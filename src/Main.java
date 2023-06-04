@@ -1,65 +1,65 @@
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner sc = new Scanner(System.in);
         String data = sc.nextLine();
         sc.close();
         String finalResult;
 
         boolean dataContains = data.contains("+") || data.contains("-") || data.contains("*") || data.contains("/");
-        if (dataContains) {
-            int a = data.length() - data.replace("+", "").length();
-            int b = data.length() - data.replace("-", "").length();
-            int c = data.length() - data.replace("*", "").length();
-            int d = data.length() - data.replace("/", "").length();
-            int operatorQuantity = a + b + c + d;  // количество операторов в строке с данными
-
-            if (operatorQuantity == 1) {
-                finalResult = calc(data);
-            } else {
-                finalResult = "throws Exception //т.к. формат математической операции не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)";
-            }
-        } else {
-            finalResult = "throws Exception //т.к. строка не является математической операцией";
+        if (!dataContains) {
+            throw new IOException("throws Exception //т.к. строка не является математической операцией");
         }
+
+        int a = data.length() - data.replace("+", "").length();
+        int b = data.length() - data.replace("-", "").length();
+        int c = data.length() - data.replace("*", "").length();
+        int d = data.length() - data.replace("/", "").length();
+        int operatorQuantity = a + b + c + d;  // количество операторов в строке с данными
+
+        if (operatorQuantity != 1) {
+            throw new IOException("throws Exception //т.к. формат математической операции не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)");
+        }
+        finalResult = calc(data);
+
         System.out.print(finalResult);
     }
 
-    public static String calc(String input) {
-        String raw_num1 = null;
-        String raw_num2 = null;
-        String num1;
+    public static String calc(String input) throws IOException {
+        String num1 = null;
         char operator = 0;
-        String num2;
+        String num2 = null;
         String result;
-
 
         for (int i = 0; i < input.length(); i++) {
             if ("+-*/".contains(input.substring(i, i + 1))) {
-                raw_num1 = input.substring(0, i);  // необработанный операнд1
+                num1 = input.substring(0, i).trim();  // необработанный операнд1
                 operator = input.charAt(i);  // оператор
-                raw_num2 = input.substring(i + 1);  // необработанный операнд2
+                num2 = input.substring(i + 1).trim();  // необработанный операнд2
                 break;
             }
         }
 
-        if (raw_num1.length() != 0 && raw_num2.length() != 0) {
-            num1 = raw_num1.strip();  // обработанный операнд1
-            num2 = raw_num2.strip();  // обработанный операнд2
-
-            if (("12345678910".contains(num1) && !num1.equals("")) && ("12345678910".contains(num2) && !num2.equals(""))) {
-                result = calcArabic(num1, num2, operator);
-            } else if (("IIIVIIIX".contains(num1) && !num1.equals("")) && ("IIIVIIIX".contains(num2) && !num2.equals(""))) {
-                result = calcRoman(num1, num2, operator);
-            } else {
-                result = "throws Exception //т.к. используются одновременно разные системы счисления";
-            }
-        }else{
-            result = "throws Exception //т.к. строка не является математической операцией";
-
+        assert num1 != null;
+        if (num1.equals("") || num2.equals("")) {
+            throw new IOException("throws Exception //т.к. формат математической операции не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)");
         }
+
+        if ((!"12345678910".contains(num1) && !"IIIVIIIX".contains(num1)) || (!"12345678910".contains(num2) && !"IIIVIIIX".contains(num2))) {
+            throw new IOException("throws Exception //т.к. формат математической операции не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)");
+        }
+
+        if ("12345678910".contains(num1) && "12345678910".contains(num2)) {
+            result = calcArabic(num1, num2, operator);
+        } else if ("IIIVIIIX".contains(num1) && "IIIVIIIX".contains(num2)) {
+            result = calcRoman(num1, num2, operator);
+        } else {
+            throw new IOException("throws Exception //т.к. используются одновременно разные системы счисления");
+        }
+
         return result;
     }
 
@@ -74,7 +74,7 @@ public class Main {
         return resultA;
     }
 
-    private static String calcRoman(String num1, String num2, char operator) {
+    private static String calcRoman(String num1, String num2, char operator) throws IOException {
         String resultR;
         HashMap<String, Integer> numRomanTransfer = new HashMap<>();
         numRomanTransfer.put("I", 1);
@@ -127,7 +127,7 @@ public class Main {
                 resultR = numArabicTransfer.get(tens * 10) + numArabicTransfer.get(units);
             }
         } else {
-            resultR = "throws Exception //т.к. в римской системе нет отрицательных чисел";
+            throw new IOException("throws Exception //т.к. в римской системе нет отрицательных чисел");
         }
         return resultR;
     }
