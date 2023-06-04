@@ -49,7 +49,7 @@ public class Main {
         }
 
         if ((!"12345678910".contains(num1) && !"IIIVIIIX".contains(num1)) || (!"12345678910".contains(num2) && !"IIIVIIIX".contains(num2))) {
-            throw new IOException("throws Exception //т.к. формат математической операции не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)");
+            throw new IOException("throws Exception //т.к. формат математической операции не удовлетворяет заданию - два операнда (от 1 до 10) и один оператор (+, -, /, *)");
         }
 
         if ("12345678910".contains(num1) && "12345678910".contains(num2)) {
